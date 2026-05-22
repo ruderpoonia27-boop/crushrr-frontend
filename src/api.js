@@ -1,7 +1,7 @@
 
 // API Utility for Crushrr Dating App
 
-const API_BASE = '/api';
+const API_BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 
 // Get auth token from localStorage
 const getAuthToken = () => localStorage.getItem('crusherr_token');
