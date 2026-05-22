@@ -33,7 +33,7 @@ function Dashboard({ user, showToast, onUserUpdate }) {
       setProfiles(data);
     } catch (err) {
       console.error('Failed to load profiles:', err);
-      setProfiles({ premiumProfiles: [], normalProfiles: [], isVIP: false });
+      showToast?.('Could not refresh profiles. Showing the last loaded profiles.', 'error');
     } finally {
       setLoading(false);
     }

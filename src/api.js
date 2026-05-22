@@ -22,18 +22,22 @@ async function apiCall(endpoint, options = {}) {
   try {
     const response = await fetch(`${API_BASE}${endpoint}`, config);
     
-    const contentType = response.headers.get('content-type');
     let data;
     
-    if (contentType && contentType.includes('application/json')) {
-      data = await response.json();
-    } else {
-      const text = await response.text();
-      console.error('Non-JSON response:', text.substring(0, 500));
-      if (response.status >= 500) {
-        throw new Error('Server is temporarily unavailable. Please try again later.');
+    const text = await response.text();
+
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        console.error('Non-JSON response:', text.substring(0, 500));
+        if (response.status >= 500) {
+          throw new Error('Server is temporarily unavailable. Please try again later.');
+        }
+        throw new Error(`Server error: ${response.status}`);
       }
-      throw new Error(`Server error: ${response.status}`);
+    } else {
+      data = {};
     }
 
     if (!response.ok) {
