@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { profilesAPI, userAPI } from '../api';
 import { useNavigate } from 'react-router-dom';
+import { getImageUrl, handleImageError } from '../imageUtils';
 
 function Dashboard({ user, showToast, onUserUpdate }) {
   const [loading, setLoading] = useState(true);
@@ -9,13 +10,6 @@ function Dashboard({ user, showToast, onUserUpdate }) {
   const navigate = useNavigate();
   
   const isVIP = user?.membership === 'vip' || user?.membership === 'vip_adult';
-  
-  // Helper to get full image URL
-  const getImageUrl = (url) => {
-    if (!url) return 'https://via.placeholder.com/400x500?text=No+Image';
-    if (url.startsWith('http')) return url;
-    return window.location.origin + url;
-  };
   
   useEffect(() => {
     // Refresh user data when component mounts (to get admin updates) - only if logged in
@@ -80,9 +74,10 @@ function Dashboard({ user, showToast, onUserUpdate }) {
     <div key={profile.id} className={`dating-card ${isBlurred ? 'blurred' : ''}`}>
       <div className="dating-card-image-wrapper">
         <img 
-          src={getImageUrl(profile.profile_pic)} 
+          src={getImageUrl(profile.profile_pic, profile.name)} 
           alt={profile.name}
           className="dating-card-image"
+          onError={(event) => handleImageError(event, profile.name)}
         />
         {isBlurred && (
           <div className="vip-lock-overlay">
@@ -230,8 +225,9 @@ function Dashboard({ user, showToast, onUserUpdate }) {
             
             <div className="profile-detail-image">
               <img 
-                src={getImageUrl(selectedProfile.profile_pic)} 
+                src={getImageUrl(selectedProfile.profile_pic, selectedProfile.name)} 
                 alt={selectedProfile.name}
+                onError={(event) => handleImageError(event, selectedProfile.name)}
               />
               {selectedProfile.visibility === 'top' && (
                 <div className="profile-detail-vip-badge">👑 VIP</div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { userAPI, uploadFile } from '../api';
 import { Navigate } from 'react-router-dom';
+import { getImageUrl, handleImageError } from '../imageUtils';
 
 const HOBBIES = [
   'Travel', 'Music', 'Photography', 'Cooking', 'Reading',
@@ -8,13 +9,6 @@ const HOBBIES = [
   'Hiking', 'Yoga', 'Sports', 'Fashion', 'Technology',
   'Coffee', 'Dogs', 'Cats', 'Shopping', 'Writing'
 ];
-
-// Helper to get full image URL
-const getImageUrl = (url) => {
-  if (!url) return 'https://via.placeholder.com/150x150?text=No+Image';
-  if (url.startsWith('http')) return url;
-  return window.location.origin + url;
-};
 
 function ProfileView({ user, onProfileUpdate, showToast }) {
   const [editing, setEditing] = useState(false);
@@ -69,9 +63,10 @@ function ProfileView({ user, onProfileUpdate, showToast }) {
     <div className="profile-view-page">
       <div className="profile-header">
         <img 
-          src={getImageUrl(user.profilePic)} 
+          src={getImageUrl(user.profilePic, user.name)} 
           alt={user.name}
           className="profile-avatar"
+          onError={(event) => handleImageError(event, user.name)}
         />
         <h2>{user.name}</h2>
         <p className="text-secondary">{user.email}</p>
@@ -146,9 +141,10 @@ function ProfileView({ user, onProfileUpdate, showToast }) {
                   {formData.profilePic ? (
                     <div className="profile-preview">
                       <img 
-                        src={getImageUrl(formData.profilePic)} 
+                        src={getImageUrl(formData.profilePic, formData.name)} 
                         alt="Preview" 
                         className="preview-image"
+                        onError={(event) => handleImageError(event, formData.name)}
                       />
                       <div className="preview-overlay">
                         <span>Change Photo</span>

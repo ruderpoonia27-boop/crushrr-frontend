@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { adminAPI, uploadFile } from '../api';
 import { storage } from '../api';
+import { getImageUrl, handleImageError } from '../imageUtils';
 
 function Admin({ showToast }) {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -344,13 +345,6 @@ function Admin({ showToast }) {
     'vip': 'VIP',
     'adult': '18+',
     'vip_adult': 'VIP + 18+'
-  };
-
-  // Helper to get full image URL
-  const getImageUrl = (url) => {
-    if (!url) return 'https://via.placeholder.com/50';
-    if (url.startsWith('http')) return url;
-    return window.location.origin + url;
   };
 
   const filteredUsers = users.filter(user => {
@@ -763,7 +757,7 @@ function Admin({ showToast }) {
                     />
                   </div>
                   {profileForm.profile_pic && (
-                    <img src={getImageUrl(profileForm.profile_pic)} alt="Preview" style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }} />
+                    <img src={getImageUrl(profileForm.profile_pic, profileForm.name)} alt="Preview" onError={(event) => handleImageError(event, profileForm.name)} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }} />
                   )}
                 </div>
               </div>
@@ -840,8 +834,9 @@ function Admin({ showToast }) {
               )}
               <td>
                 <img 
-                  src={getImageUrl(profile.profile_pic)} 
+                  src={getImageUrl(profile.profile_pic, profile.name)} 
                   alt={profile.name}
+                  onError={(event) => handleImageError(event, profile.name)}
                   style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }}
                 />
               </td>

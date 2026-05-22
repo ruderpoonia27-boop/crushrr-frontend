@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { getImageUrl, handleImageError } from '../imageUtils';
 
 function Navbar({ user, onLogout }) {
   const location = useLocation();
@@ -44,9 +45,10 @@ function Navbar({ user, onLogout }) {
           </div>
           <Link to="/profile">
             <img 
-              src={user?.profilePic || 'https://via.placeholder.com/40'} 
+              src={getImageUrl(user?.profilePic, user?.name || 'User')} 
               alt={user?.name || 'User'} 
               className="navbar-avatar"
+              onError={(event) => handleImageError(event, user?.name || 'User')}
             />
           </Link>
           <button className="btn btn-sm btn-outline" onClick={onLogout}>

@@ -80,17 +80,6 @@ export async function uploadFile(file, endpoint = '/upload/profile-pic') {
     throw new Error(data.error || 'Upload failed');
   }
   
-  // Convert relative URL to full URL if needed
-  if (data.url) {
-    if (data.url.startsWith('/uploads/')) {
-      data.url = window.location.origin + data.url;
-    }
-    // Handle relative URLs
-    if (!data.url.startsWith('http') && !data.url.startsWith('//')) {
-      data.url = window.location.origin + '/' + data.url;
-    }
-  }
-  
   return data;
 }
 

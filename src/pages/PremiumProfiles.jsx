@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { profilesAPI } from '../api';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { getImageUrl, handleImageError } from '../imageUtils';
 
 function PremiumProfiles({ user, showToast }) {
   const navigate = useNavigate();
@@ -10,12 +11,6 @@ function PremiumProfiles({ user, showToast }) {
   
   const isVIP = user?.membership === 'vip' || user?.membership === 'vip_adult';
 
-  const getImageUrl = (url) => {
-    if (!url) return 'https://via.placeholder.com/400x500?text=No+Image';
-    if (url.startsWith('http')) return url;
-    return window.location.origin + url;
-  };
-  
   useEffect(() => {
     loadProfiles();
   }, []);
@@ -58,9 +53,10 @@ function PremiumProfiles({ user, showToast }) {
   const renderProfileCard = (profile) => (
     <div key={profile.id} className={`profile-card ${!isVIP ? 'blurred' : ''}`}>
       <img 
-        src={getImageUrl(profile.profile_pic)} 
+        src={getImageUrl(profile.profile_pic, profile.name)} 
         alt={profile.name}
         className="profile-card-image"
+        onError={(event) => handleImageError(event, profile.name)}
       />
       {!isVIP && (
         <div className="vip-lock-overlay">
@@ -162,7 +158,11 @@ function PremiumProfiles({ user, showToast }) {
           <div className="profile-detail-modal" onClick={(e) => e.stopPropagation()}>
             <button className="premium-modal-close" onClick={() => setSelectedProfile(null)}>×</button>
             <div className="profile-detail-image">
-              <img src={getImageUrl(selectedProfile.profile_pic)} alt={selectedProfile.name} />
+              <img
+                src={getImageUrl(selectedProfile.profile_pic, selectedProfile.name)}
+                alt={selectedProfile.name}
+                onError={(event) => handleImageError(event, selectedProfile.name)}
+              />
               <div className="profile-detail-vip-badge">VIP</div>
             </div>
             <div className="profile-detail-content">

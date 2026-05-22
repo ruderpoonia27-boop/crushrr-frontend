@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { userAPI, uploadFile } from '../api';
+import { getImageUrl, handleImageError } from '../imageUtils';
 
 const HOBBIES = [
   'Travel', 'Music', 'Photography', 'Cooking', 'Reading',
@@ -98,10 +99,10 @@ function ProfileSetup({ user, onProfileUpdate, showToast }) {
                   {formData.profilePic ? (
                     <div className="profile-preview">
                       <img 
-                        src={formData.profilePic} 
+                        src={getImageUrl(formData.profilePic, formData.name)} 
                         alt="Preview" 
                         className="preview-image"
-                        onError={(e) => { e.target.style.display = 'none'; }}
+                        onError={(event) => handleImageError(event, formData.name)}
                       />
                       <div className="preview-overlay">
                         <span>Change Photo</span>
